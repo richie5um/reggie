@@ -1,0 +1,93 @@
+.container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.box {
+  padding: 10px;
+  margin: 10px;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+
+  &-regex {
+    flex-grow: 1;
+
+    &-text {
+      width: calc(100% - 10px);
+      height: 100px;
+    }
+  }
+
+  &-replace {
+    flex-grow: 1;
+
+    &-text {
+      width: calc(100% - 10px);
+      height: 100px;
+    }
+  }
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+
+  &-input {
+    flex-grow: 1;
+
+    &-text {
+      width: calc(100% - 10px);
+      height: 300px;
+    }
+  }
+
+  &-output {
+    flex-grow: 1;
+
+    &-text {
+      width: calc(100% - 10px);
+      // height: 300px;
+    }
+  }
+}
+
+.match {
+
+  ul {
+    list-style: none;
+  }
+
+  &-input {
+    // text-decoration: none;
+  }
+
+  &-output {
+    &-index {
+      margin-right: 4px;
+    }
+
+    div,
+    pre {
+      display: inline-block;
+      margin: 4px;
+    }
+  }
+
+}
+
+.note {
+  font-style: italic;
+  color: #aaa;
+}
