@@ -1,67 +1,83 @@
 .container {
-  padding: 10px;
+  // padding: 10px;
   display: flex;
   flex-direction: column;
+  // border-radius: 4px;
 }
 
 .box {
   padding: 10px;
-  margin: 10px;
+  // margin: 10px;
   background: #eee;
-  border-radius: 4px;
+  // border-radius: 4px;
+}
+
+.flexcols {
+  display: flex;
+  flex-direction: row;
+}
+
+.flexrows {
+  display: flex;
+  flex-direction: column;
+}
+
+.grow {
+  flex-shrink: 0;
+  flex-grow: 1;
 }
 
 .actions {
-  display: flex;
+  @extend .flexcols;
   justify-content: flex-end;
   align-items: center;
 }
 
 .top {
-  display: flex;
+  @extend .flexcols;
   align-items: center;
 
-  &-regex {
-    flex-grow: 1;
+  &-match {
+    @extend .grow;
+    @extend .flexrows;
+    align-items: stretch;
 
     &-text {
-      font-family: monospace;
-      width: calc(100% - 10px);
-      height: 100px;
+      min-height: 50px;
     }
   }
 
   &-replace {
-    flex-grow: 1;
+    @extend .grow;
+    @extend .flexrows;
+    align-items: stretch;
 
     &-text {
-      font-family: monospace;
-      width: calc(100% - 10px);
-      height: 100px;
+      min-height: 50px;
     }
   }
 }
 
 .body {
-  display: flex;
+  @extend .flexcols;
   align-items: flex-start;
 
   &-input {
-    flex-grow: 1;
+    @extend .grow;
+    @extend .flexrows;
+    align-items: stretch;
 
     &-text {
-      font-family: monospace;
-      width: calc(100% - 10px);
-      height: 300px;
+      min-height: 150px;
     }
   }
 
   &-output {
-    flex-grow: 1;
+    @extend .grow;
+    @extend .flexrows;
+    align-items: stretch;
 
     &-text {
-      font-family: monospace;
-      width: calc(100% - 10px);
       padding: 4px;
       background: white;
       border: 1px solid lightgrey;
@@ -69,15 +85,27 @@
   }
 }
 
-.match {
+.match+.match {
+  margin-top: 8px;
+}
 
-  ul {
-    list-style: none;
+.match {
+  background: rgb(250, 250, 250);
+  border-radius: 8px;
+  padding: 8px;
+
+  &-input {
+    &-text {
+      margin-bottom: 4px;
+    }
+
+    &-table {
+      border-radius: 8px;
+      background: white;
+    }
   }
 
   &-output {
-
-
     &-index {
       margin-right: 4px;
     }
@@ -96,18 +124,16 @@
   color: #aaa;
 }
 
-.matcherror {
-  
+.matcherror {}
+
+td {
+  text-align: left;
 }
 
-tr {
-  text-align: left;
+td:first-child {
+  text-align: right;
 }
 
 tr>td>a {
   font-family: monospace;
-}
-
-td {
-  border: 1px solid lightgrey;
 }

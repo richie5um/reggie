@@ -79,7 +79,6 @@ export class AppComponent {
     try {
       this.matcherror = undefined;
       this.lastAction = 'match';
-      this.save();
 
       this.matches = undefined;
       this.replaces = undefined;
@@ -107,6 +106,8 @@ export class AppComponent {
       }
 
       this.matches = matches;
+
+      this.save();
     } catch (ex) {
       this.matcherror = ex;
     }
@@ -133,7 +134,6 @@ export class AppComponent {
     try {
       this.replaceerror = undefined;
       this.lastAction = 'replace';
-      this.save();
 
       this.matches = undefined;
       this.replaces = undefined;
@@ -154,6 +154,7 @@ export class AppComponent {
       }
 
       this.replaces = replaces;
+      this.save();
     } catch (ex) {
       this.replaceerror = ex;
     }
