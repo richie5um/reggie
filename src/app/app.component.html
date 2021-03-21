@@ -9,12 +9,14 @@
     <div class="top-match box">
       <h3>Match</h3>
       <h5 *ngIf="matcherror" class="error">{{matcherror}}</h5>
-      <textarea class="top-match-text mono" [(ngModel)]="regexmatch" (ngModelChange)="match()"></textarea>
+      <textarea class="top-match-text mono" [class.outline]="lastAction === 'match'" [(ngModel)]="regexmatch"
+        (ngModelChange)="match()"></textarea>
     </div>
     <div class="top-replace box">
       <h3>Replace</h3>
       <h5 *ngIf="replaceerror" class="error">{{replaceerror}}</h5>
-      <textarea class="top-replace-text mono" [(ngModel)]="regexreplace" (ngModelChange)="replace()"></textarea>
+      <textarea class="top-replace-text mono" [class.outline]="lastAction === 'replace'" [(ngModel)]="regexreplace"
+        (ngModelChange)="replace()"></textarea>
     </div>
 
   </div>
@@ -44,17 +46,21 @@
             <table class="match-input-table">
               <thead>
                 <tr>
-                  <th>Item</th>
+                  <th class="match-output-index">Item</th>
+                  <th class="match-output-range">Range</th>
                   <th>Match</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let result of results; let index = index">
-                  <td>
-                    <div class="match-output-index">{{ (index === 0 ? 'Full: ' : index + ':') }}</div>
+                  <td class="match-output-index">
+                    <div>{{ (index === 0 ? 'Full: ' : index + ':') }}</div>
+                  </td>
+                  <td class="match-output-range">
+                    <pre>{{result.range}}</pre>
                   </td>
                   <td>
-                    <pre [innerHTML]="result.html | safehtml"></pre>
+                    <pre class="prewrap" [innerHTML]="result.html | safehtml"></pre>
                   </td>
                 </tr>
               </tbody>
@@ -204,8 +210,7 @@
             <td><code>$<var>n</var></code></td>
             <td>Where <code><var>n</var></code> is a positive integer less than 100, inserts the
               <code><var>n</var></code>th parenthesized submatch string, provided the first
-              argument was a <a
-                href="/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp"><code>RegExp</code></a>
+              argument was a <a><code>RegExp</code></a>
               object. Note that this is
               <code>1</code>-indexed. If a group <code>n</code> is not present (e.g., if group
               is 3), it will be replaced as a literal (e.g., <code>$3</code>).

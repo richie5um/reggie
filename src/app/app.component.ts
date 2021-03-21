@@ -16,7 +16,7 @@ export class AppComponent {
   public input: string = 'hello world\nhello\nzzz';
   public replaces: any[] = [];
   public matches: any[] = [];
-  private lastAction: string = 'match';
+  public lastAction: string = 'match';
 
   public matchshow: boolean = true;
   public replaceshow: boolean = true;
@@ -98,9 +98,17 @@ export class AppComponent {
       for (const match of matches) {
         for (const results of match.results) {
           for (let j = 0; j < results.length; ++j) {
-            const html = this.regexhtmlmarkup(results, j)
+            const html = this.regexhtmlmarkup(results, j);
 
-            results[j] = { text: results[j], html: html };
+            let range = '';
+            if (j < results.indices.length) {
+              const position = results.indices[j];
+              if (position) {
+                range = `[${position[0]}, ${position[1]}]`;
+              }
+            }
+
+            results[j] = { text: results[j], html: html, range };
           }
         }
       }

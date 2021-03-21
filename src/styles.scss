@@ -40,7 +40,7 @@ h5 {
   font-family: monospace;
 }
 
-pre {
+.prewrap {
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
@@ -91,7 +91,7 @@ table {
 
 th,
 td {
-  flex: 0 0 50px;
+  flex: 0 1 50px;
 }
 
 th:last-child,

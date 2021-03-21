@@ -1,15 +1,11 @@
 .container {
-  // padding: 10px;
   display: flex;
   flex-direction: column;
-  // border-radius: 4px;
 }
 
 .box {
   padding: 10px;
-  // margin: 10px;
   background: #eee;
-  // border-radius: 4px;
 }
 
 .flexcols {
@@ -31,6 +27,10 @@
   @extend .flexcols;
   justify-content: flex-end;
   align-items: center;
+}
+
+.outline {
+  border: 3px solid #009879;
 }
 
 .top {
@@ -107,8 +107,15 @@
 
   &-output {
     &-index {
-      margin-right: 4px;
+      min-width: 30px;
+      text-align: center;
     }
+
+    &-range {
+      min-width: 60px;
+      text-align: center;
+    }
+
 
     div,
     pre {
