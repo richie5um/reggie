@@ -26,14 +26,14 @@
       <div class="body-output-text">
         <div *ngIf="replaces">
           <div class="match" *ngFor="let replace of replaces; let index = index">
-            <h3 class="match-input">Line {{ index+1 }}: {{ replace.input }}</h3>
+            <h5 class="match-input">Line {{ index+1 }}: {{ replace.input }}</h5>
             <pre>{{ replace.output}}</pre>
           </div>
         </div>
 
         <div *ngIf="matches">
           <div class="match" *ngFor="let match of matches; let index = index">
-            <h3 class="match-input">Line {{ index+1 }}: {{ match.input }}</h3>
+            <h5 class="match-input">Line {{ index+1 }}: {{ match.input }}</h5>
             <div *ngIf="match.results.length === 0" class="note">No matches</div>
             <div class="match-input" *ngFor="let results of match.results; let index = index">
               <div class="match-input">Match {{ index+1 }}</div>

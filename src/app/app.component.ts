@@ -56,10 +56,12 @@ export class AppComponent {
     this.matches = undefined;
     this.replaces = undefined;
 
+    const regex = new RegExp(this.regexmatch, this.regexoptions);
+
     let replaces = [];
     const inputs = this.input.split('\n');
     for (const input of inputs) {
-      const replace = RegexUtil.replaceAll(input, this.regexmatch, this.regexreplace);
+      const replace = input.replace(regex, this.regexreplace);
       replaces = replaces.concat({ input: input, output: replace });
     }
 
