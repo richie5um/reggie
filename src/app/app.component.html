@@ -8,10 +8,12 @@
   <div class="top">
     <div class="top-regex box">
       <h3>Match</h3>
+      <h5 *ngIf="matcherror" class="error">{{matcherror}}</h5>
       <textarea class="top-regex-text" [(ngModel)]="regexmatch" (ngModelChange)="match()"></textarea>
     </div>
     <div class="top-replace box">
       <h3>Replace</h3>
+      <h5 *ngIf="replaceerror" class="error">{{replaceerror}}</h5>
       <textarea class="top-replace-text" [(ngModel)]="regexreplace" (ngModelChange)="replace()"></textarea>
     </div>
 

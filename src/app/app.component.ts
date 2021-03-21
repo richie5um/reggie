@@ -26,6 +26,9 @@ export class AppComponent {
   public matchhelp: boolean = false;
   public replacehelp: boolean = false;
 
+  public matcherror: any;
+  public replaceerror: any;
+
   constructor(
     private localStorageService: LocalStorageService
   ) { }
@@ -73,35 +76,40 @@ export class AppComponent {
   }
 
   match() {
-    this.lastAction = 'match';
-    this.save();
+    try {
+      this.matcherror = undefined;
+      this.lastAction = 'match';
+      this.save();
 
-    this.matches = undefined;
-    this.replaces = undefined;
+      this.matches = undefined;
+      this.replaces = undefined;
 
-    this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
-    const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
+      this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
+      const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
 
-    const regex = new RegExp(regexmatch, this.regexoptions);
+      const regex = new RegExp(regexmatch, this.regexoptions);
 
-    let matches = [];
-    const inputs = this.input.split('\n');
-    for (const input of inputs) {
-      const match = RegexUtil.matchAll(regex, input);
-      matches = matches.concat({ input: input, results: match });
-    }
+      let matches = [];
+      const inputs = this.input.split('\n');
+      for (const input of inputs) {
+        const match = RegexUtil.matchAll(regex, input);
+        matches = matches.concat({ input: input, results: match });
+      }
 
-    for (const match of matches) {
-      for (const results of match.results) {
-        for (let j = 0; j < results.length; ++j) {
-          const html = this.regexhtmlmarkup(results, j)
+      for (const match of matches) {
+        for (const results of match.results) {
+          for (let j = 0; j < results.length; ++j) {
+            const html = this.regexhtmlmarkup(results, j)
 
-          results[j] = { text: results[j], html: html };
+            results[j] = { text: results[j], html: html };
+          }
         }
       }
-    }
 
-    this.matches = matches;
+      this.matches = matches;
+    } catch (ex) {
+      this.matcherror = ex;
+    }
   }
 
   private regexhtmlmarkup(match, index) {
@@ -122,27 +130,34 @@ export class AppComponent {
   }
 
   replace() {
-    this.lastAction = 'replace';
-    this.save();
+    try {
+      this.replaceerror = undefined;
+      this.lastAction = 'replace';
+      this.save();
 
-    this.matches = undefined;
-    this.replaces = undefined;
+      this.matches = undefined;
+      this.replaces = undefined;
 
-    this.regexreplace = RegexUtil.replaceAll(this.regexreplace, ' ', '·');
-    const regexreplace = RegexUtil.replaceAll(this.regexreplace, '·', ' ');
+      this.regexreplace = RegexUtil.replaceAll(this.regexreplace, ' ', '·');
+      const regexreplace = RegexUtil.replaceAll(this.regexreplace, '·', ' ');
 
-    this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
-    const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
+      this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
+      const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
 
-    const regex = new RegExp(regexmatch, this.regexoptions);
+      const regex = new RegExp(regexmatch, this.regexoptions);
 
-    let replaces = [];
-    const inputs = this.input.split('\n');
-    for (const input of inputs) {
-      const replace = input.replace(regex, regexreplace);
-      replaces = replaces.concat({ input: input, output: replace });
+      let replaces = [];
+      const inputs = this.input.split('\n');
+      for (const input of inputs) {
+        const replace = input.replace(regex, regexreplace);
+        replaces = replaces.concat({ input: input, output: replace });
+      }
+
+      this.replaces = replaces;
+    } catch (ex) {
+      this.replaceerror = ex;
     }
 
-    this.replaces = replaces;
   }
+
 }
