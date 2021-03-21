@@ -16,198 +16,198 @@
     </div>
 
   </div>
-  <div class="body">
-    <div class="body-input box">
-      <h3>Input</h3>
-      <textarea class="body-input-text" [(ngModel)]="input" (ngModelChange)="save(); runLastAction()"></textarea>
-    </div>
-    <div class="body-output box">
-      <h3>Output</h3>
-      <div class="body-output-text">
-        <div *ngIf="replaces">
-          <div class="match" *ngFor="let replace of replaces; let index = index">
-            <h5 class="match-input">Line {{ index+1 }}: {{ replace.input }}</h5>
-            <pre>{{ replace.output}}</pre>
+  <div class="body-input box clickable">
+    <h3 (click)="matchshow = !matchshow">Input</h3>
+    <textarea *ngIf="matchshow" class="body-input-text" [(ngModel)]="input"
+      (ngModelChange)="save(); runLastAction()"></textarea>
+  </div>
+  <div class="body-output box">
+    <h3>Output</h3>
+    <div class="body-output-text">
+      <div *ngIf="replaces">
+        <div class="match" *ngFor="let replace of replaces; let index = index">
+          <h5 class="match-input">Line {{ index+1 }}: {{ replace.input }}</h5>
+          <div *ngFor="let replaceLine of replace.output.split('\\n')">
+            <pre>{{ replaceLine }}</pre>
           </div>
         </div>
+      </div>
 
-        <div *ngIf="matches">
-          <div class="match" *ngFor="let match of matches; let index = index">
-            <h5 class="match-input">Line {{ index+1 }}: {{ match.input }}</h5>
-            <div *ngIf="match.results.length === 0" class="note">No matches</div>
-            <div class="match-input" *ngFor="let results of match.results; let index = index">
-              <div class="match-input">Match {{ index+1 }}</div>
-              <ul>
-                <li class="match-output" *ngFor="let result of results; let index = index">
-                  <span>
-                    <pre class="match-output-index">{{ (index === 0 ? 'Full: ' : '   ' + index + ': ') }}</pre>
-                    <pre [innerHTML]="result.html | safehtml"></pre>
-                  </span>
-                </li>
-              </ul>
-            </div>
+      <div *ngIf="matches">
+        <div class="match" *ngFor="let match of matches; let index = index">
+          <h5 class="match-input">Line {{ index+1 }}: {{ match.input }}</h5>
+          <div *ngIf="match.results.length === 0" class="note">No matches</div>
+          <div class="match-input" *ngFor="let results of match.results; let index = index">
+            <div class="match-input">Match {{ index+1 }}</div>
+            <ul>
+              <li class="match-output" *ngFor="let result of results; let index = index">
+                <span>
+                  <pre class="match-output-index">{{ (index === 0 ? 'Full: ' : '   ' + index + ': ') }}</pre>
+                  <pre [innerHTML]="result.html | safehtml"></pre>
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="box clickable" (click)="matchhelp = !matchhelp">
-    <h3>Match Help</h3>
-    <div *ngIf="matchhelp">
-      <div id="cheatsheet">
-        <table class="cheatsheet">
-          <tbody>
-            <tr>
-              <th colspan="2" data-id="charclasses">Character classes</th>
-            </tr>
-            <tr>
-              <td><a>.</a></td>
-              <td>any character except newline</td>
-            </tr>
-            <tr>
-              <td><a>\w</a><a>\d</a><a>\s</a></td>
-              <td>word, digit, whitespace</td>
-            </tr>
-            <tr>
-              <td><a>\W</a><a>\D</a><a>\S</a></td>
-              <td>not word, digit, whitespace</td>
-            </tr>
-            <tr>
-              <td><a>[abc]</a></td>
-              <td>any of a, b, or c</td>
-            </tr>
-            <tr>
-              <td><a>[^abc]</a></td>
-              <td>not a, b, or c</td>
-            </tr>
-            <tr>
-              <td><a>[a-g]</a></td>
-              <td>character between a &amp; g</td>
-            </tr>
-            <tr>
-              <th colspan="2" data-id="anchors">Anchors</th>
-            </tr>
-            <tr>
-              <td><a>^abc$</a></td>
-              <td>start / end of the string</td>
-            </tr>
-            <tr>
-              <td><a>\b</a><a>\B</a></td>
-              <td>word, not-word boundary</td>
-            </tr>
-            <tr>
-              <th colspan="2" data-id="escchars">Escaped characters</th>
-            </tr>
-            <tr>
-              <td><a>\.</a><a>\*</a><a>\\</a></td>
-              <td>escaped special characters</td>
-            </tr>
-            <tr>
-              <td><a>\t</a><a>\n</a><a>\r</a></td>
-              <td>tab, linefeed, carriage return</td>
-            </tr>
-            <tr>
-              <th colspan="2" data-id="groups">Groups &amp; Lookaround</th>
-            </tr>
-            <tr>
-              <td><a>(abc)</a></td>
-              <td>capture group</td>
-            </tr>
-            <tr>
-              <td><a>\1</a></td>
-              <td>backreference to group #1</td>
-            </tr>
-            <tr>
-              <td><a>(?:abc)</a></td>
-              <td>non-capturing group</td>
-            </tr>
-            <tr>
-              <td><a>(?=abc)</a></td>
-              <td>positive lookahead</td>
-            </tr>
-            <tr>
-              <td><a>(?!abc)</a></td>
-              <td>negative lookahead</td>
-            </tr>
-            <tr>
-              <th colspan="2" data-id="quants">Quantifiers &amp; Alternation</th>
-            </tr>
-            <tr>
-              <td><a>a*</a><a>a+</a><a>a?</a></td>
-              <td>0 or more, 1 or more, 0 or 1</td>
-            </tr>
-            <tr>
-              <td><a>{{ 'a{5}' }}</a><a>{{ 'a{2,}' }}</a></td>
-              <td>exactly five, two or more</td>
-            </tr>
-            <tr>
-              <td><a>{{ 'a{1,3}' }}</a></td>
-              <td>between one &amp; three</td>
-            </tr>
-            <tr>
-              <td><a>a+?</a><a>{{ 'a{2,}?' }}</a></td>
-              <td>match as few as possible</td>
-            </tr>
-            <tr>
-              <td><a>ab|cd</a></td>
-              <td>match ab or cd</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="box clickable" (click)="replacehelp = !replacehelp">
-    <h3>Replace Help</h3>
-    <div *ngIf="replacehelp">
-      <table class="standard-table">
-        <thead>
-          <tr>
-            <th class="header" scope="col">Pattern</th>
-            <th class="header" scope="col">Inserts</th>
-          </tr>
-        </thead>
+<div class="box clickable" (click)="matchhelp = !matchhelp">
+  <h3>Match Help</h3>
+  <div *ngIf="matchhelp">
+    <div id="cheatsheet">
+      <table class="cheatsheet">
         <tbody>
           <tr>
-            <td><code>$$</code></td>
-            <td>Inserts a <code>"$"</code>.</td>
+            <th colspan="2" data-id="charclasses">Character classes</th>
           </tr>
           <tr>
-            <td><code>$&amp;</code></td>
-            <td>Inserts the matched substring.</td>
+            <td><a>.</a></td>
+            <td>any character except newline</td>
           </tr>
           <tr>
-            <td><code>$`</code></td>
-            <td>Inserts the portion of the string that precedes the matched substring.</td>
+            <td><a>\w</a><a>\d</a><a>\s</a></td>
+            <td>word, digit, whitespace</td>
           </tr>
           <tr>
-            <td><code>$'</code></td>
-            <td>Inserts the portion of the string that follows the matched substring.</td>
+            <td><a>\W</a><a>\D</a><a>\S</a></td>
+            <td>not word, digit, whitespace</td>
           </tr>
           <tr>
-            <td><code>$<var>n</var></code></td>
-            <td>Where <code><var>n</var></code> is a positive integer less than 100, inserts the
-              <code><var>n</var></code>th parenthesized submatch string, provided the first
-              argument was a <a
-                href="/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp"><code>RegExp</code></a>
-              object. Note that this is
-              <code>1</code>-indexed. If a group <code>n</code> is not present (e.g., if group
-              is 3), it will be replaced as a literal (e.g., <code>$3</code>).
-            </td>
+            <td><a>[abc]</a></td>
+            <td>any of a, b, or c</td>
           </tr>
           <tr>
-            <td><code>$&lt;Name&gt;</code></td>
-            <td>Where <code>Name</code> is a capturing group name. If the group is not in the
-              match, or not in the regular expression, or if a string was passed as the first argument
-              to <code>replace</code> instead of a regular expression, this resolves to a literal
-              (e.g., <code>$&lt;Name&gt;</code>).
-              Only available in browser versions supporting named capturing groups.</td>
+            <td><a>[^abc]</a></td>
+            <td>not a, b, or c</td>
+          </tr>
+          <tr>
+            <td><a>[a-g]</a></td>
+            <td>character between a &amp; g</td>
+          </tr>
+          <tr>
+            <th colspan="2" data-id="anchors">Anchors</th>
+          </tr>
+          <tr>
+            <td><a>^abc$</a></td>
+            <td>start / end of the string</td>
+          </tr>
+          <tr>
+            <td><a>\b</a><a>\B</a></td>
+            <td>word, not-word boundary</td>
+          </tr>
+          <tr>
+            <th colspan="2" data-id="escchars">Escaped characters</th>
+          </tr>
+          <tr>
+            <td><a>\.</a><a>\*</a><a>\\</a></td>
+            <td>escaped special characters</td>
+          </tr>
+          <tr>
+            <td><a>\t</a><a>\n</a><a>\r</a></td>
+            <td>tab, linefeed, carriage return</td>
+          </tr>
+          <tr>
+            <th colspan="2" data-id="groups">Groups &amp; Lookaround</th>
+          </tr>
+          <tr>
+            <td><a>(abc)</a></td>
+            <td>capture group</td>
+          </tr>
+          <tr>
+            <td><a>\1</a></td>
+            <td>backreference to group #1</td>
+          </tr>
+          <tr>
+            <td><a>(?:abc)</a></td>
+            <td>non-capturing group</td>
+          </tr>
+          <tr>
+            <td><a>(?=abc)</a></td>
+            <td>positive lookahead</td>
+          </tr>
+          <tr>
+            <td><a>(?!abc)</a></td>
+            <td>negative lookahead</td>
+          </tr>
+          <tr>
+            <th colspan="2" data-id="quants">Quantifiers &amp; Alternation</th>
+          </tr>
+          <tr>
+            <td><a>a*</a><a>a+</a><a>a?</a></td>
+            <td>0 or more, 1 or more, 0 or 1</td>
+          </tr>
+          <tr>
+            <td><a>{{ 'a{5}' }}</a><a>{{ 'a{2,}' }}</a></td>
+            <td>exactly five, two or more</td>
+          </tr>
+          <tr>
+            <td><a>{{ 'a{1,3}' }}</a></td>
+            <td>between one &amp; three</td>
+          </tr>
+          <tr>
+            <td><a>a+?</a><a>{{ 'a{2,}?' }}</a></td>
+            <td>match as few as possible</td>
+          </tr>
+          <tr>
+            <td><a>ab|cd</a></td>
+            <td>match ab or cd</td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+
+<div class="box clickable" (click)="replacehelp = !replacehelp">
+  <h3>Replace Help</h3>
+  <div *ngIf="replacehelp">
+    <table class="standard-table">
+      <thead>
+        <tr>
+          <th class="header" scope="col">Pattern</th>
+          <th class="header" scope="col">Inserts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>$$</code></td>
+          <td>Inserts a <code>"$"</code>.</td>
+        </tr>
+        <tr>
+          <td><code>$&amp;</code></td>
+          <td>Inserts the matched substring.</td>
+        </tr>
+        <tr>
+          <td><code>$`</code></td>
+          <td>Inserts the portion of the string that precedes the matched substring.</td>
+        </tr>
+        <tr>
+          <td><code>$'</code></td>
+          <td>Inserts the portion of the string that follows the matched substring.</td>
+        </tr>
+        <tr>
+          <td><code>$<var>n</var></code></td>
+          <td>Where <code><var>n</var></code> is a positive integer less than 100, inserts the
+            <code><var>n</var></code>th parenthesized submatch string, provided the first
+            argument was a <a href="/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp"><code>RegExp</code></a>
+            object. Note that this is
+            <code>1</code>-indexed. If a group <code>n</code> is not present (e.g., if group
+            is 3), it will be replaced as a literal (e.g., <code>$3</code>).
+          </td>
+        </tr>
+        <tr>
+          <td><code>$&lt;Name&gt;</code></td>
+          <td>Where <code>Name</code> is a capturing group name. If the group is not in the
+            match, or not in the regular expression, or if a string was passed as the first argument
+            to <code>replace</code> instead of a regular expression, this resolves to a literal
+            (e.g., <code>$&lt;Name&gt;</code>).
+            Only available in browser versions supporting named capturing groups.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
