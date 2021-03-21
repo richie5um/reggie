@@ -74,6 +74,8 @@ export class AppComponent {
 
   match() {
     this.lastAction = 'match';
+    this.save();
+
     this.matches = undefined;
     this.replaces = undefined;
 
@@ -110,7 +112,7 @@ export class AppComponent {
 
       if (position) {
         matchelements.splice(position[1], 0, '</span>');
-        matchelements.splice(position[0], 0, '<span class="highlight">');
+        matchelements.splice(position[0], 0, `<span class="highlight highlight-${index}">`);
 
         return matchelements.join('');
       }
@@ -121,6 +123,8 @@ export class AppComponent {
 
   replace() {
     this.lastAction = 'replace';
+    this.save();
+
     this.matches = undefined;
     this.replaces = undefined;
 
