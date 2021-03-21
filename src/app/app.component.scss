@@ -95,3 +95,15 @@
   font-style: italic;
   color: #aaa;
 }
+
+tr {
+  text-align: left;
+}
+
+tr>td>a {
+  font-family: monospace;
+}
+
+td {
+  border: 1px solid lightgrey;
+}

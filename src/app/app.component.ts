@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LocalStorageService } from './services/local-storage.service';
 import { RegexUtil } from './utils/regex.util';
 
 @Component({
@@ -15,8 +16,53 @@ export class AppComponent {
   public input: string = 'hello world\nhello\nzzz';
   public replaces: any[] = [];
   public matches: any[] = [];
+  private lastAction: string;
+
+  public matchhelp: boolean = false;
+  public replacehelp: boolean = false;
+
+  constructor(
+    private localStorageService: LocalStorageService
+  ) { }
+
+  ngOnInit() {
+    this.load();
+    this.match();
+  }
+
+  load() {
+    const match = this.localStorageService.getItem('re-match');
+    this.regexmatch = match ? match : this.regexmatch;
+
+    const options = this.localStorageService.getItem('re-options');
+    this.regexoptions = options ? options : this.regexoptions
+
+    const replace = this.localStorageService.getItem('re-replace');
+    this.regexreplace = replace ? replace : this.regexreplace;
+
+    const input = this.localStorageService.getItem('re-input');
+    this.input = input ? input : this.input;
+  }
+
+  save() {
+    this.localStorageService.setItem('re-match', this.regexmatch);
+    this.localStorageService.setItem('re-options', this.regexoptions);
+    this.localStorageService.setItem('re-replace', this.regexreplace);
+    this.localStorageService.setItem('re-input', this.input);
+  }
+
+  runLastAction() {
+    switch (this.lastAction) {
+      case 'replace':
+        this.replace();
+      case 'match':
+      default:
+        this.match();
+    }
+  }
 
   match() {
+    this.lastAction = 'match';
     this.matches = undefined;
     this.replaces = undefined;
 
@@ -44,15 +90,23 @@ export class AppComponent {
 
   private regexhtmlmarkup(match, index) {
     let matchelements = match.input.split('');
-    const position = match.indices[index];
 
-    matchelements.splice(position[1], 0, '</span>');
-    matchelements.splice(position[0], 0, '<span class="highlight">');
+    if (index < match.indices.length) {
+      const position = match.indices[index];
 
-    return matchelements.join('');
+      if (position) {
+        matchelements.splice(position[1], 0, '</span>');
+        matchelements.splice(position[0], 0, '<span class="highlight">');
+
+        return matchelements.join('');
+      }
+    }
+
+    return match.input;
   }
 
   replace() {
+    this.lastAction = 'replace';
     this.matches = undefined;
     this.replaces = undefined;
 
