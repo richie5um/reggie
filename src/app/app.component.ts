@@ -6,13 +6,17 @@ export interface RegexMatch {
   text: string;
 }
 
+export interface Options {
+  hideNoMatches: boolean;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'my-regex';
+  title = 'Reggie';
 
   public regexMatches: RegexMatch[] = [];
   public regexMatchesIndex = 0;
@@ -38,6 +42,10 @@ export class AppComponent {
 
   public matcherror: any;
   public replaceerror: any;
+
+  public options: Options = {
+    hideNoMatches: false
+  };
 
   constructor(
     private localStorageService: LocalStorageService
@@ -69,14 +77,17 @@ export class AppComponent {
       this.regexReplacesIndex = 0;
     }
 
-    const options = this.localStorageService.getItem('re-options');
-    this.regexoptions = options ? options : this.regexoptions
+    const regexoptions = this.localStorageService.getItem('re-options');
+    this.regexoptions = regexoptions ? regexoptions : this.regexoptions
 
     const input = this.localStorageService.getItem('re-input');
     this.input = input ? input : this.input;
 
     const lastaction = this.localStorageService.getItem('re-lastaction');
     this.lastAction = lastaction ? lastaction : this.lastAction;
+
+    const options = this.localStorageService.getJson('re-alloptions');
+    this.options = options ? options : this.options;
   }
 
   save() {
@@ -85,6 +96,8 @@ export class AppComponent {
 
     this.localStorageService.setJson('re-replaces', this.regexReplaces);
     this.localStorageService.setJson('re-replacesindex', this.regexReplacesIndex);
+
+    this.localStorageService.setJson('re-alloptions', this.options);
 
     this.localStorageService.setItem('re-options', this.regexoptions);
     this.localStorageService.setItem('re-input', this.input);
@@ -105,6 +118,7 @@ export class AppComponent {
 
   match(index = 0) {
     console.log('match', index);
+
     try {
       this.matcherror = undefined;
       this.lastAction = 'match';
