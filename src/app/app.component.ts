@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { LocalStorageService } from './services/local-storage.service';
 import { RegexUtil } from './utils/regex.util';
 
+export interface RegexMatch {
+  text: string;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,9 +14,15 @@ import { RegexUtil } from './utils/regex.util';
 export class AppComponent {
   title = 'my-regex';
 
+  public regexMatches: RegexMatch[] = [];
+  public regexMatchesIndex = 0;
+
+  public regexReplaces: RegexMatch[] = [];
+  public regexReplacesIndex = 0;
+
   public regexoptions: string = 'g';
   public regexmatch: string = '(h(el)l(o))';
-  public regexreplace: string = '';
+  public regexreplace: string = '$';
   public input: string = 'hello world\nhello\nzzz';
   public replaces: any[] = [];
   public matches: any[] = [];
@@ -39,14 +49,28 @@ export class AppComponent {
   }
 
   load() {
-    const match = this.localStorageService.getItem('re-match');
-    this.regexmatch = match ? match : this.regexmatch;
+    const matches = this.localStorageService.getJson('re-matches');
+    this.regexMatches = matches ? matches : [{ text: this.regexmatch }];
+
+    const matchesIndex = this.localStorageService.getJson('re-matchesindex');
+    this.regexMatchesIndex = matchesIndex ? matchesIndex : 0;
+
+    if (this.regexMatchesIndex > this.regexMatches.length) {
+      this.regexMatchesIndex = 0;
+    }
+
+    const replaces = this.localStorageService.getJson('re-replaces');
+    this.regexReplaces = replaces ? replaces : [{ text: this.regexreplace }];
+
+    const replacesIndex = this.localStorageService.getJson('re-replacesindex');
+    this.regexReplacesIndex = replacesIndex ? replacesIndex : 0;
+
+    if (this.regexReplacesIndex > this.regexReplaces.length) {
+      this.regexReplacesIndex = 0;
+    }
 
     const options = this.localStorageService.getItem('re-options');
     this.regexoptions = options ? options : this.regexoptions
-
-    const replace = this.localStorageService.getItem('re-replace');
-    this.regexreplace = replace ? replace : this.regexreplace;
 
     const input = this.localStorageService.getItem('re-input');
     this.input = input ? input : this.input;
@@ -56,9 +80,13 @@ export class AppComponent {
   }
 
   save() {
-    this.localStorageService.setItem('re-match', this.regexmatch);
+    this.localStorageService.setJson('re-matches', this.regexMatches);
+    this.localStorageService.setJson('re-matchesindex', this.regexMatchesIndex);
+
+    this.localStorageService.setJson('re-replaces', this.regexReplaces);
+    this.localStorageService.setJson('re-replacesindex', this.regexReplacesIndex);
+
     this.localStorageService.setItem('re-options', this.regexoptions);
-    this.localStorageService.setItem('re-replace', this.regexreplace);
     this.localStorageService.setItem('re-input', this.input);
     this.localStorageService.setItem('re-lastaction', this.lastAction);
   }
@@ -75,7 +103,8 @@ export class AppComponent {
     }
   }
 
-  match() {
+  match(index = 0) {
+    console.log('match', index);
     try {
       this.matcherror = undefined;
       this.lastAction = 'match';
@@ -83,10 +112,17 @@ export class AppComponent {
       this.matches = undefined;
       this.replaces = undefined;
 
-      this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
-      const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
+      this.regexMatchesIndex = index;
 
-      const regex = new RegExp(regexmatch, this.regexoptions);
+      if (this.regexMatchesIndex > this.regexMatches.length) {
+        return;
+      }
+
+      let regexItem = this.regexMatches[this.regexMatchesIndex];
+      regexItem.text = RegexUtil.replaceAll(regexItem.text, ' ', '·');
+      const regexMatch = RegexUtil.replaceAll(regexItem.text, '·', ' ');
+
+      const regex = new RegExp(regexMatch, this.regexoptions);
 
       let matches = [];
       const inputs = this.input.split('\n');
@@ -138,7 +174,8 @@ export class AppComponent {
     return match.input;
   }
 
-  replace() {
+  replace(index = 0) {
+    console.log('replace', index);
     try {
       this.replaceerror = undefined;
       this.lastAction = 'replace';
@@ -146,18 +183,30 @@ export class AppComponent {
       this.matches = undefined;
       this.replaces = undefined;
 
-      this.regexreplace = RegexUtil.replaceAll(this.regexreplace, ' ', '·');
-      const regexreplace = RegexUtil.replaceAll(this.regexreplace, '·', ' ');
+      this.regexReplacesIndex = index;
 
-      this.regexmatch = RegexUtil.replaceAll(this.regexmatch, ' ', '·');
-      const regexmatch = RegexUtil.replaceAll(this.regexmatch, '·', ' ');
+      if (this.regexReplacesIndex > this.regexReplaces.length) {
+        return;
+      }
 
-      const regex = new RegExp(regexmatch, this.regexoptions);
+      let regexReplaceItem = this.regexReplaces[this.regexReplacesIndex];
+      regexReplaceItem.text = RegexUtil.replaceAll(regexReplaceItem.text, ' ', '·');
+      const regexReplace = RegexUtil.replaceAll(regexReplaceItem.text, '·', ' ');
+
+      if (this.regexMatchesIndex > this.regexMatches.length) {
+        return;
+      }
+
+      let regexItem = this.regexMatches[this.regexMatchesIndex];
+      regexItem.text = RegexUtil.replaceAll(regexItem.text, ' ', '·');
+      const regexMatch = RegexUtil.replaceAll(regexItem.text, '·', ' ');
+
+      const regex = new RegExp(regexMatch, this.regexoptions);
 
       let replaces = [];
       const inputs = this.input.split('\n');
       for (const input of inputs) {
-        const replace = input.replace(regex, regexreplace);
+        const replace = input.replace(regex, regexReplace);
         replaces = replaces.concat({ input: input, output: replace });
       }
 

@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~font-awesome/css/font-awesome.css";
 
 .highlight {
   font-weight: bold;
@@ -15,6 +16,15 @@
   padding: 8px;
   border-radius: 4px;
 }
+
+.red {
+  color: rgb(255, 121, 121);
+}
+
+.green {
+  color: #009879;
+}
+
 
 .highlight-0 {
   background-color: rgb(206, 228, 243);
@@ -47,6 +57,11 @@ h5 {
   white-space: -o-pre-wrap;
   word-wrap: break-word;
   margin: 4px 0;
+}
+
+.vcenter {
+  display: flex;
+  align-items: center;
 }
 
 table {

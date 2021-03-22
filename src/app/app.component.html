@@ -6,23 +6,36 @@
   </div>
 
   <div class="top">
-    <div class="top-match box">
-      <h3>Match</h3>
+    <div class="top-match box" [class.outline]="lastAction === 'match'">
+      <h3 class="top-match-title vcenter">Match <button (click)="regexMatches.push({text: regexmatch}); save()"><i
+            class="fa fa-plus green"></i></button></h3>
       <h5 *ngIf="matcherror" class="error">{{matcherror}}</h5>
-      <textarea class="top-match-text mono" [class.outline]="lastAction === 'match'" [(ngModel)]="regexmatch"
-        (ngModelChange)="match()"></textarea>
+      <div *ngFor="let regex of regexMatches; let index = index" class="top-match-item"
+        [class.outline]="regexMatchesIndex === index">
+        <input class="top-match-text mono" [(ngModel)]="regex.text" (ngModelChange)="regexMatchesIndex = index; match()"
+          (focus)="match(index)">
+        <button (click)="regexMatches.splice(index, 1); match(0)"><i class="fa fa-trash red"></i></button>
+      </div>
     </div>
-    <div class="top-replace box">
-      <h3>Replace</h3>
+    <div class="top-replace box" [class.outline]="lastAction === 'replace'">
+      <h3 class="top-replace-title vcenter">Replace <button
+          (click)="regexReplaces.push({text: regexreplace}); save()"><i class="fa fa-plus green"></i></button></h3>
       <h5 *ngIf="replaceerror" class="error">{{replaceerror}}</h5>
-      <textarea class="top-replace-text mono" [class.outline]="lastAction === 'replace'" [(ngModel)]="regexreplace"
-        (ngModelChange)="replace()"></textarea>
+      <div *ngFor="let regex of regexReplaces; let index = index" class="top-replace-item"
+        [class.outline]="regexReplacesIndex === index">
+        <input class="top-replace-text mono" [(ngModel)]="regex.text" (ngModelChange)="replace(index)"
+          (focus)="replace(index)">
+        <button (click)="regexReplaces.splice(index, 1); replace(0)"><i class="fa fa-trash red"></i></button>
+      </div>
     </div>
-
   </div>
   <div class="body-input box clickable">
-    <h3 (click)="matchshow = !matchshow">Input</h3>
-    <textarea *ngIf="matchshow" class="body-input-text mono" [(ngModel)]="input"
+    <h3 (click)="inputshow = !inputshow">
+      <i *ngIf="inputshow" class="fa fa-chevron-circle-up"></i>
+      <i *ngIf="!inputshow" class="fa fa-chevron-circle-down"></i>
+      Input
+    </h3>
+    <textarea *ngIf="inputshow" class="body-input-text mono" [(ngModel)]="input"
       (ngModelChange)="save(); runLastAction()"></textarea>
   </div>
   <div class="body-output box">
@@ -72,7 +85,11 @@
   </div>
 
   <div class="box clickable" (click)="matchhelp = !matchhelp">
-    <h3>Match Help</h3>
+    <h3>
+      <i *ngIf="matchhelp" class="fa fa-chevron-circle-up"></i>
+      <i *ngIf="!matchhelp" class="fa fa-chevron-circle-down"></i>
+      Match Help
+    </h3>
     <div *ngIf="matchhelp">
       <div id="cheatsheet">
         <table class="cheatsheet">
@@ -180,7 +197,11 @@
 
 
   <div class="box clickable" (click)="replacehelp = !replacehelp">
-    <h3>Replace Help</h3>
+    <h3>
+      <i *ngIf="replacehelp" class="fa fa-chevron-circle-up"></i>
+      <i *ngIf="!replacehelp" class="fa fa-chevron-circle-down"></i>
+      Replace Help
+    </h3>
     <div *ngIf="replacehelp">
       <table class="standard-table">
         <thead>
