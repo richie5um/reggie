@@ -51,7 +51,8 @@ export class AppComponent {
     hideLine: false
   };
 
-  private debug = true;
+  // Quick approach to disable auto-execution
+  private debug = false;
 
   constructor(
     private localStorageService: LocalStorageService
