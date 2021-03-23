@@ -12,8 +12,8 @@
       <h5 *ngIf="matcherror" class="error">{{matcherror}}</h5>
       <div *ngFor="let regex of regexMatches; let index = index" class="top-match-item"
         [class.outline]="regexMatchesIndex === index">
-        <input class="top-match-text mono" [(ngModel)]="regex.text" (ngModelChange)="regexMatchesIndex = index; match()"
-          (focus)="match(index)">
+        <input class="top-match-text mono" [(ngModel)]="regex.text"
+          (ngModelChange)="regexMatchesIndex = index; automatch(index)" (focus)="automatch(index)">
         <button (click)="regexMatches.splice(index, 1); match(0)"><i class="fa fa-trash red"></i></button>
       </div>
     </div>
@@ -24,8 +24,8 @@
       <div *ngFor="let regex of regexReplaces; let index = index" class="top-replace-item"
         [class.outline]="regexReplacesIndex === index">
         <input class="top-replace-text mono" [(ngModel)]="regex.text" (ngModelChange)="replace(index)"
-          (focus)="replace(index)">
-        <button (click)="regexReplaces.splice(index, 1); replace(0)"><i class="fa fa-trash red"></i></button>
+          (focus)="autoreplace(index)">
+        <button (click)="regexReplaces.splice(index, 1); autoreplace(0)"><i class="fa fa-trash red"></i></button>
       </div>
     </div>
   </div>
@@ -42,6 +42,10 @@
     <div class="body-output-header">
       <h3>Output</h3>
       <div class="body-output-header-actions">
+        <div class="body-output-header-action" (click)="options.hideLine = !options.hideLine">
+          <div>Hide 'Line' output</div>
+          <app-toggle-switch [(toggle)]="options.hideLine"></app-toggle-switch>
+        </div>
         <div class="body-output-header-action" (click)="options.hideNoMatches = !options.hideNoMatches">
           <div>Hide 'no matches'</div>
           <app-toggle-switch [(toggle)]="options.hideNoMatches"></app-toggle-switch>
@@ -49,19 +53,10 @@
       </div>
     </div>
     <div class="body-output-text mono">
-      <!-- <div *ngIf="replaces">
-        <div class="match" *ngFor="let replace of replaces; let index = index">
-          <h5 class="match-input">Line {{ index+1 }}: {{ replace.input }}</h5>
-          <div *ngFor="let replaceLine of replace.output.split('\\n')">
-            <pre>{{ replaceLine }}</pre>
-          </div>
-        </div>
-      </div> -->
-
       <div *ngIf="replaces">
         <div *ngFor="let replace of replaces; let index = index">
-          <div *ngIf="replace.length > 0 || !options.hideNoMatches" class="replace">
-            <h5 class="replace-input">Line {{ index+1 }}: {{ replace.input }}</h5>
+          <div *ngIf="replace.output.trim().length > 0 || !options.hideNoMatches" class="replace">
+            <h5 *ngIf="!options.hideLine" class="replace-input">Line {{ index+1 }}: {{ replace.input }}</h5>
             <div *ngFor="let replaceLine of replace.output.split('\\n')">
               <pre *ngIf="replaceLine || !options.hideNoMatches">{{ replaceLine }}</pre>
             </div>
@@ -71,8 +66,8 @@
 
       <div *ngIf="matches">
         <div *ngFor="let match of matches; let index = index">
-          <div *ngIf="match.results.length > 0 && !options.hideNoMatches" class="match">
-            <h5 class="match-input">Line {{ index+1 }}: {{ match.input }}</h5>
+          <div *ngIf="match.results.length > 0 || !options.hideNoMatches" class="match">
+            <h5 *ngIf="!options.hideLine" class="match-input">Line {{ index+1 }}: {{ match.input }}</h5>
             <div *ngIf="match.results.length === 0" class="note">No matches</div>
             <div *ngFor="let results of match.results; let index = index">
               <div class="match-input-text"> > Match {{ index+1 }}</div>

@@ -21,18 +21,30 @@ export class RegexUtil {
 
     let matches = [];
 
-    try {
-      let match;
-      while ((match = execWithIndices(regex, text)) != null) {
-        match.lastIndex = regex.lastIndex;
-        matches.push(match);
+    let match;
+    while ((match = execWithIndices(regex, text)) != null) {
+      match.lastIndex = regex.lastIndex;
 
-        if (!regex.global) {
-          break
-        }
+      // Check for '.*' matching nothing issues, and exit early.
+      if (match.length === 1 && match[0] === '' && match.lastIndex === text.length) {
+        break;
       }
-    } catch (ex) {
-      console.log(ex);
+
+      // To prevent loops for regex that match zero characters.
+      if (match.index === regex.lastIndex && match.length === match.filter(m => m.length === 0).length) {
+        regex.lastIndex++;
+      }
+
+      // Circuit breaker
+      if (matches.length > 1000) {
+        throw `CircuitBreaker: Exceeded match limit (1000)`;
+      }
+
+      matches.push(match);
+
+      if (!regex.global) {
+        break
+      }
     }
 
     return matches;

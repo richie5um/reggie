@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import * as CircuitBreaker from 'opossum';
+
 import { LocalStorageService } from './services/local-storage.service';
 import { RegexUtil } from './utils/regex.util';
 
@@ -8,6 +10,7 @@ export interface RegexMatch {
 
 export interface Options {
   hideNoMatches: boolean;
+  hideLine: boolean;
 }
 
 @Component({
@@ -44,8 +47,11 @@ export class AppComponent {
   public replaceerror: any;
 
   public options: Options = {
-    hideNoMatches: false
+    hideNoMatches: false,
+    hideLine: false
   };
+
+  private debug = true;
 
   constructor(
     private localStorageService: LocalStorageService
@@ -105,6 +111,10 @@ export class AppComponent {
   }
 
   runLastAction() {
+    if (this.debug) {
+      return;
+    }
+
     switch (this.lastAction) {
       case 'replace':
         this.replace();
@@ -116,7 +126,42 @@ export class AppComponent {
     }
   }
 
+  automatch(index = 0) {
+    if (this.debug) {
+      return;
+    }
+
+    this.match(index);
+  }
+
   match(index = 0) {
+    const options = {
+      timeout: 3000,
+      errorThresholdPercentage: 50, // When 50% of requests fail, trip the circuit
+      resetTimeout: 10000
+    };
+
+    const breaker = new CircuitBreaker(() => {
+      return new Promise((resolve) => {
+        this.matchInternal(index);
+        resolve(true);
+      });
+    }, options);
+
+    breaker.fallback(() => {
+      this.matcherror = 'There is a problem'
+    });
+
+    breaker.fire()
+      .then(() => {
+        console.log('finished');
+      })
+      .catch((err) => {
+        this.matcherror = err;
+      });
+  }
+
+  matchInternal(index = 0) {
     console.log('match', index);
 
     try {
@@ -171,24 +216,39 @@ export class AppComponent {
     }
   }
 
-  private regexhtmlmarkup(match, index) {
-    let matchelements = match.input.split('');
-
-    if (index < match.indices.length) {
-      const position = match.indices[index];
-
-      if (position) {
-        matchelements.splice(position[1], 0, '</span>');
-        matchelements.splice(position[0], 0, `<span class="highlight highlight-${index}">`);
-
-        return matchelements.join('');
-      }
+  autoreplace(index = 0) {
+    if (this.debug) {
+      return;
     }
 
-    return match.input;
+    this.replace(index);
   }
 
+
   replace(index = 0) {
+    const options = {
+      timeout: 3000,
+      errorThresholdPercentage: 50, // When 50% of requests fail, trip the circuit
+      resetTimeout: 10000
+    };
+
+    const breaker = new CircuitBreaker(() => {
+      return new Promise((resolve) => {
+        this.replaceInternal(index);
+        resolve(true);
+      });
+    }, options);
+
+    breaker.fallback(() => this.replaceerror = 'There is a problem');
+
+    breaker.fire()
+      .then(console.log)
+      .catch((err) => {
+        this.replaceerror = err;
+      });
+  }
+
+  replaceInternal(index = 0) {
     console.log('replace', index);
     try {
       this.replaceerror = undefined;
@@ -230,6 +290,23 @@ export class AppComponent {
       this.replaceerror = ex;
     }
 
+  }
+
+  private regexhtmlmarkup(match, index) {
+    let matchelements = match.input.split('');
+
+    if (index < match.indices.length) {
+      const position = match.indices[index];
+
+      if (position) {
+        matchelements.splice(position[1], 0, '</span>');
+        matchelements.splice(position[0], 0, `<span class="highlight highlight-${index}">`);
+
+        return matchelements.join('');
+      }
+    }
+
+    return match.input;
   }
 
 }
